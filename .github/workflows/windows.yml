@@ -9,8 +9,14 @@ jobs:
         run: cmake -S . -B build
       - name: Build
         run: cmake --build build --config Release
+      - name: Stage runtime audio assets
+        shell: bash
+        run: |
+          mkdir -p release/assets
+          cp build/Release/echodrive.exe release/echodrive.exe
+          cp -r assets/audio release/assets/audio
       - name: Package
-        run: Compress-Archive -Path build/Release/echodrive.exe -DestinationPath EchoDrive-Windows-x64.zip
+        run: Compress-Archive -Path release/* -DestinationPath EchoDrive-Windows-x64.zip
       - uses: actions/upload-artifact@v4
         with:
           name: EchoDrive-Windows-x64

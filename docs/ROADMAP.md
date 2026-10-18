@@ -1,9 +1,10 @@
 # EchoDrive production roadmap
 
-1. Foundation: command loop, localization, settings, Windows speech bridge.
-2. Desktop UI: accessible menus, keyboard remapping and high contrast.
-3. 3D runtime: renderer, vehicle physics, collision and camera systems.
-4. Audio: engine layers, spatial hazard cues, street ambience and voice mixing.
-5. Content: 25 original vehicle archetypes and 15 original streets inspired by Cairo, the US, Britain, Russia, China, Japan, India, France, Spain, Italy and Germany.
-6. Traffic: AI vehicles, intersections, signals, hazards and automatic driving.
-7. QA: keyboard-only and blind-play testing, performance, installer and signing.
+1. Foundation: command loop, localization, settings, Windows speech bridge. **Complete**
+2. Spatial audio core: listener, azimuth, distance attenuation and stereo pan. **Complete in 0.2**
+3. Content catalog: 15 authored streets and 25 vehicle profiles. **Complete in 0.2**
+4. Native audio backend: streamed WAV/OGG samples, engine layers, traffic and ambience buses.
+5. Desktop UI: accessible menus, keyboard remapping, high contrast and screen-reader labels.
+6. 3D runtime: renderer, vehicle physics, collision and camera systems.
+7. Traffic: AI vehicles, intersections, signals, hazards and automatic driving.
+8. QA: keyboard-only and blind-play testing, performance, installer and signing.

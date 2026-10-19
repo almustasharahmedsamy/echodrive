@@ -7,13 +7,14 @@
 #include "voice.hpp"
 #include "traffic.hpp"
 #include "weather.hpp"
+#include "route.hpp"
 #include <string>
 namespace echodrive {
-enum class Command { Forward, Brake, Left, Right, Faster, Slower, Auto, Manual, Repeat, Reset, ListStreets, ListVehicles, WeatherCycle, Traffic, Quit, Unknown };
+enum class Command { Forward, Brake, Left, Right, Faster, Slower, Auto, Manual, Repeat, Reset, ListStreets, ListVehicles, WeatherCycle, Traffic, Map, Controls, Horn, Pause, Engine, Quit, Unknown };
 class Game {
 public: Game(); void run();
 private:
- Settings settings_; VoiceGuide voice_; SpatialAudioEngine audio_; AudioRuntime runtime_; TrafficSystem traffic_; WeatherSystem weather_; double speed_=0; int heading_=0; int vehicle_=1;
- Command parse(const std::string&) const; void selectStreet(); void selectVehicle(); void handle(Command); void status() const; void menu() const; void listContent() const;
+ Settings settings_; VoiceGuide voice_; SpatialAudioEngine audio_; AudioRuntime runtime_; TrafficSystem traffic_; WeatherSystem weather_; RouteMap route_; double speed_=0; int heading_=0; int vehicle_=1; bool paused_=false; bool engineOn_=true;
+ Command parse(const std::string&) const; std::string readInput() const; void selectStreet(); void selectVehicle(); void handle(Command); void status() const; void menu() const; void listContent() const; void showControls() const;
 };
 }

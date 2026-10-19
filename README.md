@@ -2,11 +2,11 @@
 
 EchoDrive is an accessible native C++ driving simulation foundation for blind and low-vision players. It combines Arabic-first voice guidance, spatial OGG audio, route distance, traffic, weather, vehicle customization, stations and an expandable regional data model.
 
-## Version 0.6
+## Version 0.7
 
 The project supports six selectable voice/UI languages: Arabic, English, French, Spanish, Russian and Japanese. The language selector is available through `F8` or the `language` command. Windows SAPI is used for speech output; the current message catalog has full Arabic/English coverage and the language framework is ready for adding complete translated catalogs.
 
-Vehicles can now be customized by color, engine profile and brake profile. The vehicle service model tracks petrol, diesel/gas-compatible fuel, oil and electric battery values. Stations include fuel, gas, EV charging and service-centre profiles. `F5` or `Insert` opens the station action, and `F6` customizes the current car. `F7` or `Tab` selects the next car from the 25-car catalog.
+Vehicles can now be customized by color, engine profile and brake profile. The catalog contains 40 vehicle profiles, including 15 new electric, autonomous, utility, racing and emergency models. The vehicle service model tracks petrol, diesel/gas-compatible fuel, oil and electric battery values. Stations include fuel, gas, EV charging and service-centre profiles. `F5` or `Insert` opens the station action, and `F6` customizes the current car. `F7` or `Tab` selects the next car.
 
 The control layer supports arrow keys, Z/E forward, X brake, C/V steering, B/I faster, N/O slower, A automatic, M manual, S/U status, D/Y map, F controls, G horn, H/CapsLock engine, J/W weather, K/T traffic, L streets, P/Escape pause, R reset and Q quit. Function keys are mapped to F1 status, F2 map, F3 weather, F4 traffic, F5 stations, F6 customization, F7 next car, F8 language, F9 controls, F10 pause, F11 reset and F12 Egypt regions. Enter reports status; Delete selects the next car.
 
@@ -21,6 +21,8 @@ cmake --build build --config Release
 ```
 
 The Windows ZIP is self-contained as a folder package: run `echodrive.exe` beside `assets/audio`. Audio licenses are documented in `assets/audio/ASSET_LICENSES.md` and `assets/audio/WEATHER_LICENSES.md`.
+
+The source is public for visibility but proprietary. `LICENSE` grants no reuse, redistribution or commercial rights. Commercial licensing is available only by written agreement with Ahmed Samy Studio. The current AI is a deterministic traffic gameplay system with lane changes, following, yielding and emergency states; it is not a neural autonomous-driving product. Arabic and English currently have the broadest message coverage, while the six-language framework is in place for reviewed translation expansion.
 
 ## License
 

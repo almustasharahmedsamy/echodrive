@@ -2,7 +2,11 @@
 
 EchoDrive is an accessible native C++ driving simulation foundation for blind and low-vision players. It combines Arabic-first voice guidance, spatial OGG audio, route distance, traffic, weather, vehicle customization, stations and an expandable regional data model.
 
-## Version 0.7
+## Version 0.9
+
+The native desktop shell now has a high-contrast, keyboard-first terminal UI with localized menus, prompts, control help and accessibility labels. The original Arabic language remains available, and English, French, Spanish, Russian and Japanese are now used across the main startup flow, street and vehicle prompts, menus, controls, weather, traffic, pause, error and exit messages. `F8` cycles the six languages and saves the selection through `echodrive.cfg`. Windows speech now converts UTF-8 correctly before sending text to SAPI, avoiding the previous character corruption for non-ASCII languages.
+
+This is an accessible native text UI, not a claim of a finished graphical desktop front-end. A future GUI can reuse the `Localization` and `DesktopUi` modules without changing gameplay systems.
 
 The project supports six selectable voice/UI languages: Arabic, English, French, Spanish, Russian and Japanese. The language selector is available through `F8` or the `language` command. Windows SAPI is used for speech output; the current message catalog has full Arabic/English coverage and the language framework is ready for adding complete translated catalogs.
 

@@ -15,6 +15,7 @@
 #include "scenarios.hpp"
 #include "economy.hpp"
 #include "telemetry.hpp"
+#include "ui.hpp"
 #include <string>
 namespace echodrive {
 enum class Command { Forward, Brake, Left, Right, Faster, Slower, Auto, Manual, Repeat, Reset, ListStreets, ListVehicles, WeatherCycle, Traffic, Map, Controls, Horn, Pause, Engine, Stations, Customize, Language, RegionMap, NewVehicle, Profile, Mission, Accessibility, Quit, Unknown };
@@ -36,6 +37,7 @@ private:
     ScenarioBook scenarios_;
     EconomySystem economy_;
     TelemetryRecorder telemetry_;
+    DesktopUi ui_;
     double speed_ = 0;
     int heading_ = 0;
     int vehicle_ = 1;

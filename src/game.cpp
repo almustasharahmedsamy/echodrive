@@ -15,15 +15,10 @@ Game::Game() : settings_(loadSettings("echodrive.cfg")), voice_(settings_.langua
     scenarios_.load("echodrive.scenarios");
     economy_.load("echodrive.economy");
     telemetry_.load("echodrive.telemetry");
+    ui_.setTheme({accessibility_.settings().highContrast, false, true});
 }
 void Game::menu() const {
-    std::cout << "\n=== EchoDrive 0.8 | Ahmed Samy Studio ===\n"
-              << "[ARROWS] up/down=سرعة وفرامل left/right=توجيه | [F1-F12] وظائف\n"
-              << "[z/e] تقدم [x] فرامل [c/v] يسار/يمين [b/i] أسرع [n/o] أبطأ\n"
-              << "[a] آلي [m] يدوي [s/u] حالة [d/y] خريطة [f] تحكم [g] بوق [h] محرك\n"
-              << "[j/w] طقس [k/t] مرور [l] الشوارع [p] إيقاف [r] إعادة [q] خروج\n"
-              << "[profile] ملف اللاعب [mission] المهمة [access] الإتاحة [scenario] السيناريو\n"
-              << "[Insert] محطات [Tab] سيارة جديدة [CapsLock] محرك [Enter] حالة [Esc] إيقاف\n> ";
+    std::cout << ui_.menu(settings_.language) << "\n> ";
 }
 std::string Game::readInput() const {
 #ifdef _WIN32
@@ -54,7 +49,7 @@ std::string Game::readInput() const {
 #endif
 }
 void Game::selectStreet() {
-    std::cout << "اختر شارعًا من 1 إلى 15: ";
+    std::cout << ui_.prompt(settings_.language, Localization::selectStreet(settings_.language, 15)) << "\n> ";
     int n = 1;
     std::cin >> n;
     std::cin.ignore(10000, '\n');
@@ -69,10 +64,10 @@ void Game::selectStreet() {
     economy_.refreshMarket(region_, static_cast<int>(weather_.state().type));
     career_.beginTrip(n, vehicle_);
     telemetry_.start(n, vehicle_, region_);
-    voice_.announce("بدأت " + x.ar + " من دولة " + x.country + ". المسافة " + std::to_string(static_cast<int>(route_.state().lengthM)) + " متر", "Starting " + x.en + " in " + x.country + ". Route length " + std::to_string(static_cast<int>(route_.state().lengthM)) + " meters");
+    voice_.announce6(Localization::startedStreet(Language::Arabic, x.ar, x.country, static_cast<int>(route_.state().lengthM)), Localization::startedStreet(Language::English, x.en, x.country, static_cast<int>(route_.state().lengthM)), Localization::startedStreet(Language::French, x.en, x.country, static_cast<int>(route_.state().lengthM)), Localization::startedStreet(Language::Spanish, x.en, x.country, static_cast<int>(route_.state().lengthM)), Localization::startedStreet(Language::Russian, x.en, x.country, static_cast<int>(route_.state().lengthM)), Localization::startedStreet(Language::Japanese, x.en, x.country, static_cast<int>(route_.state().lengthM)));
 }
 void Game::selectVehicle() {
-    std::cout << "اختر سيارة من 1 إلى 40: ";
+    std::cout << ui_.prompt(settings_.language, Localization::selectVehicle(settings_.language, 40)) << "\n> ";
     int n = 1;
     std::cin >> n;
     std::cin.ignore(10000, '\n');
@@ -82,7 +77,7 @@ void Game::selectVehicle() {
     runtime_.playLoop(assets.engine, {0, 0, 1}, 0.70f);
     const auto& x = allVehicles()[n - 1];
     career_.beginTrip(settings_.street, vehicle_);
-    voice_.announce("اخترت " + x.ar + "، السرعة القصوى " + std::to_string(x.topSpeed), "Selected " + x.en + ", top speed " + std::to_string(x.topSpeed));
+    voice_.announce6(Localization::selectedVehicle(Language::Arabic, x.ar, x.topSpeed), Localization::selectedVehicle(Language::English, x.en, x.topSpeed), Localization::selectedVehicle(Language::French, x.en, x.topSpeed), Localization::selectedVehicle(Language::Spanish, x.en, x.topSpeed), Localization::selectedVehicle(Language::Russian, x.en, x.topSpeed), Localization::selectedVehicle(Language::Japanese, x.en, x.topSpeed));
 }
 Command Game::parse(const std::string& r) const {
     if (r == "1" || r == "up" || r == "forward" || r == "z" || r == "e" || r == "تقدم") return Command::Forward;
@@ -124,8 +119,14 @@ void Game::status() const {
     voice_.announce(ar, en);
 }
 void Game::showControls() const {
-    std::cout << "\n--- Controls ---\nArrows: up/down/left/right\nF1 status | F2 map | F3 weather | F4 traffic | F5 stations | F6 customize | F7 new car | F8 language | F9 help | F10 pause | F11 reset | F12 Egypt regions\nprofile player file | mission current mission | access accessibility | scenario active scenario\nEsc pause | Insert stations | Enter status | CapsLock engine | Tab next car | Delete next car\nZ/E forward | X brake | C/V steer | B/I faster | N/O slower | A auto | M manual | G horn | Q quit\nMouse buttons are reserved for the upcoming graphical desktop front-end.\n";
-    voice_.announce("تم عرض اختصارات F1 إلى F12 وأوامر ملف اللاعب والإتاحة", "F1 to F12 plus player profile and accessibility commands are shown");
+    std::cout << ui_.controls(settings_.language) << "\n";
+    auto a = Localization::ui(Language::Arabic);
+    auto e = Localization::ui(Language::English);
+    auto f = Localization::ui(Language::French);
+    auto s = Localization::ui(Language::Spanish);
+    auto r = Localization::ui(Language::Russian);
+    auto j = Localization::ui(Language::Japanese);
+    voice_.announce6(a.controlsTitle, e.controlsTitle, f.controlsTitle, s.controlsTitle, r.controlsTitle, j.controlsTitle);
 }
 void Game::listContent() const {
     std::cout << "\n--- 15 Streets ---\n";
@@ -162,12 +163,12 @@ void Game::handle(Command c) {
     case Command::Reset: speed_ = 0; heading_ = 0; route_.reset(); traffic_.reset(settings_.street); weather_.set(Weather::Clear); break;
     case Command::Repeat: status(); break;
     case Command::ListStreets: case Command::ListVehicles: listContent(); break;
-    case Command::WeatherCycle: weather_.cycle(); runtime_.playLoop(weather_.ambiencePath(), {0, 0, 5}, 0.38f); voice_.announce("الطقس الآن " + weather_.name(true) + ". " + weather_.advisory(true), "Weather is now " + weather_.name(false) + ". " + weather_.advisory(false)); break;
-    case Command::Traffic: traffic_.tick(speed_, settings_.automaticDriving); voice_.announce(traffic_.nearestAlert(true), traffic_.nearestAlert(false)); break;
+    case Command::WeatherCycle: weather_.cycle(); runtime_.playLoop(weather_.ambiencePath(), {0, 0, 5}, 0.38f); voice_.announce6(Localization::weather(Language::Arabic, weather_.name(true), weather_.advisory(true)), Localization::weather(Language::English, weather_.name(false), weather_.advisory(false)), Localization::weather(Language::French, weather_.name(false), weather_.advisory(false)), Localization::weather(Language::Spanish, weather_.name(false), weather_.advisory(false)), Localization::weather(Language::Russian, weather_.name(false), weather_.advisory(false)), Localization::weather(Language::Japanese, weather_.name(false), weather_.advisory(false))); break;
+    case Command::Traffic: traffic_.tick(speed_, settings_.automaticDriving); voice_.announce6(traffic_.nearestAlert(true), Localization::traffic(Language::English, traffic_.nearestAlert(false)), Localization::traffic(Language::French, traffic_.nearestAlert(false)), Localization::traffic(Language::Spanish, traffic_.nearestAlert(false)), Localization::traffic(Language::Russian, traffic_.nearestAlert(false)), Localization::traffic(Language::Japanese, traffic_.nearestAlert(false))); break;
     case Command::Map: voice_.announce(route_.render(true), route_.render(false)); std::cout << route_.render(true) << "\n"; break;
     case Command::Controls: showControls(); break;
     case Command::Horn: runtime_.playOneShot("assets/audio/vehicles/Car_Horn.ogg", {1, 0, 3}, 0.8f); voice_.announce("بوق", "Horn"); break;
-    case Command::Pause: paused_ = !paused_; voice_.announce(paused_ ? "تم إيقاف اللعبة" : "تم استئناف اللعبة", paused_ ? "Game paused" : "Game resumed"); break;
+    case Command::Pause: { paused_ = !paused_; auto a=Localization::ui(Language::Arabic); auto e=Localization::ui(Language::English); auto f=Localization::ui(Language::French); auto s=Localization::ui(Language::Spanish); auto r=Localization::ui(Language::Russian); auto j=Localization::ui(Language::Japanese); voice_.announce6(paused_?a.paused:a.resumed, paused_?e.paused:e.resumed, paused_?f.paused:f.resumed, paused_?s.paused:s.resumed, paused_?r.paused:r.resumed, paused_?j.paused:j.resumed); break; }
     case Command::Engine: engineOn_ = !engineOn_; if (!engineOn_) speed_ = 0; voice_.announce(engineOn_ ? "تم تشغيل المحرك" : "تم إيقاف المحرك", engineOn_ ? "Engine on" : "Engine off"); break;
     case Command::Stations: voice_.announce(vehicleSystem_.stations(true) + ". " + vehicleSystem_.status(true), vehicleSystem_.stations(false) + ". " + vehicleSystem_.status(false)); vehicleSystem_.refuel(); vehicleSystem_.changeOil(); vehicleSystem_.charge(); career_.refuel(); career_.service(); career_.charge(); break;
     case Command::Customize: { static const char* colors[] = {"blue", "red", "green", "black", "white", "yellow"}; static int i = 0; vehicleSystem_.setColor(colors[++i % 6]); vehicleSystem_.upgradeEngine(i % 2 ? "sport" : "standard"); vehicleSystem_.upgradeBrakes(i % 2 ? "abs-sport" : "standard"); voice_.announce(vehicleSystem_.customize(true), vehicleSystem_.customize(false)); break; }
@@ -177,12 +178,13 @@ void Game::handle(Command c) {
     case Command::Profile: voice_.announce(career_.summary(true) + ". " + career_.achievements(true), career_.summary(false) + ". " + career_.achievements(false)); break;
     case Command::Mission: voice_.announce(career_.missionSummary(true) + ". " + scenarios_.active(true), career_.missionSummary(false) + ". " + scenarios_.active(false)); break;
     case Command::Accessibility: voice_.announce(accessibility_.summary(true), accessibility_.summary(false)); break;
-    case Command::Quit: career_.finishTrip(); telemetry_.finish(); career_.save("echodrive.profile"); accessibility_.save("echodrive.accessibility"); scenarios_.save("echodrive.scenarios"); economy_.save("echodrive.economy"); telemetry_.save("echodrive.telemetry"); saveSettings(settings_, "echodrive.cfg"); voice_.announce("إلى اللقاء، تم حفظ ملف اللاعب والاقتصاد وسجل الرحلة", "Goodbye, player profile, economy and telemetry saved"); break;
-    case Command::Unknown: voice_.announce("لم أفهم الأمر", "Command not understood"); break;
+    case Command::Quit: career_.finishTrip(); telemetry_.finish(); career_.save("echodrive.profile"); accessibility_.save("echodrive.accessibility"); scenarios_.save("echodrive.scenarios"); economy_.save("echodrive.economy"); telemetry_.save("echodrive.telemetry"); saveSettings(settings_, "echodrive.cfg"); { auto a=Localization::ui(Language::Arabic); auto e=Localization::ui(Language::English); auto f=Localization::ui(Language::French); auto s=Localization::ui(Language::Spanish); auto r=Localization::ui(Language::Russian); auto j=Localization::ui(Language::Japanese); voice_.announce6(a.goodbye, e.goodbye, f.goodbye, s.goodbye, r.goodbye, j.goodbye); } break;
+    case Command::Unknown: { auto a=Localization::ui(Language::Arabic); auto e=Localization::ui(Language::English); auto f=Localization::ui(Language::French); auto s=Localization::ui(Language::Spanish); auto r=Localization::ui(Language::Russian); auto j=Localization::ui(Language::Japanese); voice_.announce6(a.unknown, e.unknown, f.unknown, s.unknown, r.unknown, j.unknown); break; }
     }
 }
 void Game::run() {
-    voice_.announce("مرحبًا بك في EchoDrive. ملف اللاعب والمهام والاقتصاد والإتاحة مفعلة", "Welcome to EchoDrive. Profile, missions, economy and accessibility are enabled.");
+    auto a=Localization::ui(Language::Arabic); auto e=Localization::ui(Language::English); auto f=Localization::ui(Language::French); auto s=Localization::ui(Language::Spanish); auto r=Localization::ui(Language::Russian); auto j=Localization::ui(Language::Japanese);
+    voice_.announce6(a.welcome, e.welcome, f.welcome, s.welcome, r.welcome, j.welcome);
     selectStreet();
     selectVehicle();
     for (;;) {
